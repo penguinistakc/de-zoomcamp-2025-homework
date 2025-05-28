@@ -1,11 +1,20 @@
-# de-zoomcamp-2025-homework
-Homework for the 2025 Data Engineering Zoomcamp Cohort
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: kestra
+      POSTGRES_USER: kestra
+      POSTGRES_PASSWORD: k3str4
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
 
-```bash
-docker network create pg-network
-```
+# docker network create pg-network
 
-```bash
 docker run -itd \
     -e POSTGRES_USER="root" \
     -e POSTGRES_PASSWORD="root" \
@@ -16,9 +25,8 @@ docker run -itd \
     -p 5432:5432 \
     --network=pg-network \
     --name=pg-database \
-```
+postgres
 
-```bash
 docker run -it --detach \
   -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
   -e PGADMIN_DEFAULT_PASSWORD="root" \
@@ -26,9 +34,8 @@ docker run -it --detach \
   --network=pg-network \
   --name=pgadmin4 \
   dpage/pgadmin4
-```
 
-```bash
+
 URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
 python ingest_data.py \
   --user=root \
@@ -38,16 +45,13 @@ python ingest_data.py \
   --database=ny_taxi \
   --table=yellow_taxi_trips \
   --csv_url=$(URL)
-```
 
-```bash
-ocker run -it --network=pg-network \
+docker run -it --network=pg-datagbse \
   taxi_ingest:v002 \
   --user=root \
   --password=root \
-  --host=pg-database \
+  --host=localhost \
   --port=5432 \
   --db=ny_taxi \
   --table_name=yellow_taxi_trips \
   --url=${URL} 
-```
