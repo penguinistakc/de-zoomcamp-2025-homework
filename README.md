@@ -6,16 +6,17 @@ docker network create pg-network
 ```
 
 ```bash
-docker run -itd \
+docker run -it \
     -e POSTGRES_USER="root" \
     -e POSTGRES_PASSWORD="root" \
     -e POSTGRES_DB="ny_taxi" \
     -e PGDATA="/var/lib/postgresql/data/pgdata" \
-    -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
+    -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data:rw \
     -u 1000:1000 \
     -p 5432:5432 \
     --network=pg-network \
     --name=pg-database \
+    postgres
 ```
 
 ```bash
@@ -41,8 +42,8 @@ python ingest_data.py \
 ```
 
 ```bash
-ocker run -it --network=pg-network \
-  taxi_ingest:v002 \
+docker run -it --network=pg-network \
+  taxi_ingest:v003 \
   --user=root \
   --password=root \
   --host=pg-database \
